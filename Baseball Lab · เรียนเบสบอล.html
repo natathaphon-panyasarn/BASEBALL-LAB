@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Baseball Lab · เรียนเบสบอล</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;700&family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef2ee;--fg:#14202e;--card:#fff;--mut:#546174;--line:#d3dbd3;--navy:#12263f;--acc:#c62d2d;--blue:#1d5fc4;--org:#e07a10;--g1:#4a9a4a;--g2:#5cae58;--dirt:#c8955a;--ok:#16794a;--bad:#c62d2d;--gold:#ffd23f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0e141c;--fg:#eaeff6;--card:#18222f;--mut:#9fb0c4;--line:#2c3b4e;--navy:#0a1522;--g1:#2f6a2f;--g2:#3a7a38;--dirt:#8c6a40;--blue:#7aaaf7;--ok:#4fd08c;--bad:#ff7a7a}}
+:root[data-theme=dark]{--bg:#0e141c;--fg:#eaeff6;--card:#18222f;--mut:#9fb0c4;--line:#2c3b4e;--navy:#0a1522;--g1:#2f6a2f;--g2:#3a7a38;--dirt:#8c6a40;--blue:#7aaaf7;--ok:#4fd08c;--bad:#ff7a7a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 "Noto Sans Thai",system-ui,sans-serif}
+h1,h2,h3,.sb b,.nav button{font-family:Kanit,"Noto Sans Thai",system-ui,sans-serif}
+header{background:var(--navy);color:#fff;position:sticky;top:0;z-index:5;display:flex;gap:10px;align-items:center;padding:8px 14px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:8px;white-space:nowrap}.logo svg{height:34px;width:auto}.wm{font:700 22px/1 Kanit,sans-serif;font-style:italic;letter-spacing:.05em;display:flex;align-items:center;gap:6px}.wm i{background:var(--acc);padding:3px 8px;border-radius:5px;font-size:17px;letter-spacing:.1em;font-style:normal;transform:skewX(-8deg)}
+.nav{display:flex;gap:4px;overflow-x:auto;flex:1;min-width:0}
+.nav button{background:none;border:0;color:#cfe0f5;padding:8px 12px;border-radius:8px;font-size:15px;cursor:pointer;white-space:nowrap;min-height:40px}
+.nav button[aria-current=true]{background:#fff;color:var(--navy)}
+.lang{display:flex;border:2px solid #fff;border-radius:8px;overflow:hidden}
+.lang button{background:none;border:0;color:#fff;padding:6px 12px;font-weight:600;cursor:pointer;min-height:36px}
+.lang button[aria-pressed=true]{background:#fff;color:var(--navy)}
+main{max-width:1080px;margin:0 auto;padding:18px 14px 60px}
+section[hidden]{display:none}
+h1{font-size:clamp(30px,6vw,52px);line-height:1.15;margin:.2em 0}h2{font-size:26px;margin:.2em 0 .5em}h3{margin:.2em 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.two{display:grid;gap:16px;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);align-items:start}
+@media(max-width:800px){.two{grid-template-columns:1fr}}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:10px 18px;font:600 16px "Noto Sans Thai",sans-serif;cursor:pointer;min-height:44px}
+.btn.alt{background:var(--card);color:var(--fg);border:2px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:default}
+button:focus-visible,.pl:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.hero{display:grid;gap:20px;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center}
+@media(max-width:800px){.hero{grid-template-columns:1fr}}
+.mut{color:var(--mut)}.pill{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:1px 10px;font-size:13px}
+.stage{cursor:pointer;text-align:left;font:inherit;color:inherit}.stage b{color:var(--acc);font-family:Kanit}
+svg.field{width:100%;height:auto;display:block;border-radius:14px;border:1px solid var(--line)}
+.mv{transition:transform var(--d,.6s) ease-in-out,opacity .4s}.hid{opacity:0;pointer-events:none}
+.pl{cursor:pointer}.pl circle{fill:var(--blue);stroke:#fff;stroke-width:2}.pl text,.of text{fill:#fff;font:700 11px Kanit,sans-serif;text-anchor:middle;pointer-events:none}
+.pl:hover circle{stroke:var(--gold)}
+.pl.sel circle{stroke:var(--gold);stroke-width:5;stroke-dasharray:5 3}.pl.good circle{stroke:#28d17c;stroke-width:5}.pl.bad circle{stroke:#ff4d4d;stroke-width:5;stroke-dasharray:3 3}
+.pl.hint circle{stroke:var(--gold);stroke-width:5}
+.of rect{fill:var(--org);stroke:#fff;stroke-width:2}
+.lb{font:600 12px "Noto Sans Thai",sans-serif;fill:#fff;opacity:.85;text-anchor:middle;pointer-events:none}
+.sb{display:flex;gap:8px;flex-wrap:wrap}.sb>div{background:var(--navy);color:#fff;border-radius:10px;padding:4px 14px;text-align:center;min-width:64px}
+.sb b{font-size:26px;display:block;line-height:1.2}.sb span{font-size:12px;opacity:.85}
+.ctl{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.ctl select{min-height:44px;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--fg);padding:0 8px;font:inherit}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tabs button,.dot{border:2px solid var(--line);background:var(--card);color:var(--fg);border-radius:10px;padding:8px 12px;cursor:pointer;font:inherit;min-height:42px}
+.tabs button[aria-pressed=true],.dot.cur{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.dot.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+.fb{border-left:6px solid var(--mut);padding:10px 14px;margin-top:10px;background:var(--card);border-radius:8px}.fb.ok{border-color:var(--ok)}.fb.no{border-color:var(--bad)}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;background:var(--card);border:2px solid var(--line);border-radius:10px;padding:10px 14px;font:inherit;color:inherit;cursor:pointer;min-height:46px}
+.opt:hover{border-color:var(--blue)}
+.bar{height:12px;background:var(--line);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ok)}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;margin:8px 0}
+@media(prefers-reduced-motion:reduce){.mv{transition:none}}
+</style></head><body>
+<header><div class="logo" role="img" aria-label="Baseball Lab"><svg viewBox="0 0 48 40" aria-hidden="true"><g stroke="#ff5a4f" stroke-width="2.4" stroke-linecap="round"><path d="M2 13H13M0 20H11M4 27H13"/></g><circle cx="31" cy="20" r="15" fill="#fff"/><g fill="none" stroke="#e0342d" stroke-width="2" stroke-linecap="round" stroke-dasharray="2.6 2.4"><path d="M24 7C28.500 14 28.500 26 24 33"/><path d="M38 7C33.500 14 33.500 26 38 33"/></g></svg><span class="wm">BASEBALL<i>LAB</i></span></div>
+<nav class="nav" id="nav" aria-label="main"></nav>
+<div class="lang" role="group" aria-label="language"><button data-l="th" aria-pressed="true">TH</button><button data-l="en" aria-pressed="false">EN</button></div></header>
+<main>
+<section id="s-home"><div class="hero"><div><h1 data-i="h1"></h1><p class="mut" data-i="h2"></p><button class="btn" data-go="field" data-i="start"></button></div><div id="hf"></div></div>
+<h2 style="margin-top:28px" data-i="path"></h2><div class="grid" id="stages"></div></section>
+
+<section id="s-learn" hidden><h2 data-i="learn"></h2><div class="grid" id="learnc"></div><p><button class="btn" data-go="field" data-i="next1"></button></p></section>
+
+<section id="s-field" hidden><h2 data-i="field"></h2><div class="two"><div><div id="ef"></div><div class="leg"><span>● <span data-i="lgD"></span></span><span>■ <span data-i="lgO"></span></span><span>○ <span data-i="lgB"></span></span></div></div><div class="card" id="info" aria-live="polite"></div></div></section>
+
+<section id="s-sim" hidden><h2 data-i="sim"></h2><div class="tabs" id="scn"></div><div class="two"><div><div id="sf"></div><div class="card" id="teams" style="margin-top:8px" aria-live="polite"></div>
+<div class="ctl"><button class="btn alt" id="bBack" aria-label="back">⏮</button><button class="btn" id="bPlay">▶</button><button class="btn alt" id="bNext" aria-label="next">⏭</button><button class="btn alt" id="bRe">↺</button><label><span data-i="speed"></span> <select id="spd"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label></div></div>
+<div><div id="sbsim" class="sb"></div><div class="card" style="margin-top:10px" aria-live="polite"><span class="pill" id="stp"></span><p id="stxt" style="margin:.4em 0 0"></p></div><p class="mut" style="font-size:14px" data-i="assume"></p></div></div></section>
+
+<section id="s-rules" hidden><h2 data-i="rules"></h2><div class="grid" id="rulec"></div>
+<h2 style="margin-top:24px" data-i="try"></h2><div class="card"><div id="rsb" class="sb"></div><p id="rscore" class="mut"></p>
+<div class="ctl" id="rbtn"></div><div class="fb" id="rmsg" aria-live="polite"></div></div></section>
+
+<section id="s-chal" hidden><h2 data-i="chal"></h2><div class="tabs" id="cnav"></div><div class="two"><div id="cfield"></div><div><div class="card"><span class="pill" id="ccat"></span><h3 id="cq"></h3><div id="copts"></div><div class="ctl"><button class="btn alt" id="chint"></button><button class="btn" id="cnext"></button></div></div><div id="cfb" aria-live="polite"></div></div></div></section>
+
+<section id="s-prog" hidden><h2 data-i="prog"></h2><div class="grid" id="pg"></div><p><button class="btn alt" id="reset" data-i="reset"></button></p></section>
+</main>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+let lang='th';try{lang=localStorage.getItem('bb_lang')||'th'}catch(e){}
+let P={xp:0,done:{},ok:{},bad:{},vis:{}};try{P=Object.assign(P,JSON.parse(localStorage.getItem('bb_prog')||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('bb_prog',JSON.stringify(P));localStorage.setItem('bb_lang',lang)}catch(e){}};
+const T=a=>a[lang=='th'?0:1];
+const U={
+home:['หน้าแรก','Home'],learn:['เรียนรู้เบสบอล','Learn'],field:['สนามเบสบอล','Field'],sim:['จำลองเกม','Simulation'],rules:['กติกาและคะแนน','Rules & Scoring'],chal:['ภารกิจท้าทาย','Challenges'],prog:['ความก้าวหน้า','Progress'],
+h1:['เข้าใจเบสบอลได้ ด้วยการเล่นและลองดู','Understand baseball by playing with it'],h2:['คลิกผู้เล่น ดูลูกวิ่ง ตัดสินใจเอง แล้วเรียนรู้ผลที่ตามมา ไม่ต้องมีพื้นฐานมาก่อน','Tap players, follow the ball, make calls and see what happens. No experience needed.'],
+start:['เริ่มเรียน (Start Learning)','Start Learning'],path:['เส้นทางการเรียน 6 ขั้น','Your 6-step path'],
+next1:['ไปดูสนามจริง','Explore the field'],lgD:['ฝ่ายรับ (Defense)','Defense'],lgO:['ฝ่ายรุก (Offense)','Offense'],lgB:['ลูกเบสบอล (Ball)','Ball'],
+speed:['ความเร็ว','Speed'],assume:['สมมติฐานของการจำลอง: ผู้เล่นยืนตำแหน่งมาตรฐาน และจังหวะถูกจัดให้เห็นกติกาชัดเจน','Simulation assumptions: standard fielding positions; timing is arranged to show the rule clearly.'],
+try:['ลองเอง: นับบอล สไตรก์ และเอาต์','Try it: count balls, strikes and outs'],reset:['ล้างความก้าวหน้า','Reset progress'],
+B:['บอล','Ball'],S:['สไตรก์','Strike'],O:['เอาต์','Out'],R:['คะแนน','Runs'],inn:['อินนิง','Inning'],
+tap:['แตะผู้เล่นบนสนามเพื่อดูหน้าที่ของเขา','Tap any player on the field to see what they do.'],wh:['ยืนที่ไหน','Where'],ro:['หน้าที่','Job'],te:['ทำงานร่วมกับใคร','Teamwork'],ex:['ตัวอย่างในเกม','In a real game'],
+step:['ขั้น','Step'],hint:['คำใบ้','Hint'],nextq:['ข้อต่อไป','Next'],done:['เก่งมาก!','Nice!'],notq:['ยังไม่ใช่','Not quite.'],isa:['คนนี้คือ','That is'],right:['คำตอบที่ถูกคือ','The right answer is'],
+pos:['ตำแหน่ง','Positions'],follow:['ตามลูกบอล','Follow the ball'],rule:['กติกา','Rules'],score:['คะแนน','Scoring'],
+xp:['แต้ม XP','XP'],cd:['ภารกิจที่ผ่าน','Challenges done'],ca:['ตอบถูก / ผิด','Correct / wrong'],tp:['หัวข้อที่เข้าใจ','Topics'],pr:['ควรฝึกเพิ่ม','Needs practice'],bd:['เหรียญรางวัล','Badges'],
+b1:['ตอบถูกครั้งแรก','First correct answer'],b2:['เปิดครบทุกหน้า','Visited every section'],b3:['ผ่านทุกภารกิจ','All challenges done'],
+bBall:['ลูกบอล (นอกเขต)','Ball (outside zone)'],bStr:['สไตรก์ (ในเขต/ตีพลาด)','Strike (in zone / swing & miss)'],bFoul:['ลูกฟาวล์','Foul ball'],bOut:['ผู้ตีเอาต์ (เช่น ลูกลอยถูกจับ)','Batter out (e.g. fly caught)'],bRun:['ทำคะแนน 1 แต้ม','Score a run'],
+m0:['เริ่มนับ: กดปุ่มด้านบนเพื่อดูว่าสกอร์เปลี่ยนอย่างไร','Press a button to see how the count changes.'],mBall:['บอล! ครบ 4 บอล ผู้ตีเดินไปเบสหนึ่งฟรี (Walk)','Ball. Four balls and the batter walks to first base.'],mWalk:['ครบ 4 บอล: ผู้ตีได้เดินไปเบสหนึ่ง (Walk) นับใหม่','Ball four: the batter walks to first base (Walk). Count resets.'],mStr:['สไตรก์! ครบ 3 สไตรก์ = เอาต์','Strike. Three strikes means out.'],mK:['สไตรก์ที่ 3: ผู้ตีเอาต์ (Strikeout) นับใหม่','Strike three: the batter is out (Strikeout). Count resets.'],mFoul:['ฟาวล์ ถ้ายังมีสไตรก์ไม่ถึง 2 จะนับเป็นสไตรก์','Foul ball. It counts as a strike if there are fewer than 2.'],mFoul2:['ฟาวล์ตอนมี 2 สไตรก์: ไม่นับเป็นสไตรก์ที่ 3 ผู้ตีไม่เอาต์','Foul with 2 strikes: it is NOT strike three. The batter stays alive.'],mOut:['เอาต์! นับใหม่สำหรับผู้ตีคนต่อไป','Out! Count resets for the next batter.'],mHalf:['ครบ 3 เอาต์ สลับฝ่ายรุก-รับ','Three outs: teams switch offense and defense.'],mRun:['คะแนนเข้า 1 แต้มให้ทีมที่กำลังตี','One run for the team at bat.'],
+away:['ทีมเยือน','Away'],home:['ทีมเหย้า','Home'],top:['ครึ่งบน ▲ ทีมเยือนตี','Top ▲ away team bats'],bot:['ครึ่งล่าง ▼ ทีมเหย้าตี','Bottom ▼ home team bats']};
+const u=k=>T(U[k]);
+const POS=[
+{id:'P',x:220,y:290,a:'P',n:['ผู้ขว้างลูก','Pitcher'],w:['บนเนินขว้าง กลางสนามใน','On the mound in the middle of the infield'],r:['ขว้างลูกเข้าโฮมเพลตให้ผู้ตีตียาก','Throws pitches to home plate so the batter has a hard time.'],t:['ทำงานกับผู้รับลูก และวิ่งไปเฝ้าเบสหนึ่งเมื่อลูกไปทางขวา','Works with the catcher; covers first on balls hit to the right.'],e:['ลูกกลิ้งช้าๆ มาที่เนิน ผู้ขว้างหยิบแล้วโยนไปเบสหนึ่ง','A slow grounder rolls to the mound; the pitcher grabs it and throws to first.']},
+{id:'C',x:220,y:376,a:'C',n:['ผู้รับลูก','Catcher'],w:['หลังโฮมเพลต','Crouched behind home plate'],r:['รับลูกที่ขว้างมา และกันผู้วิ่งไม่ให้เข้าโฮม','Catches pitches and blocks runners from scoring.'],t:['เห็นทั้งสนาม จึงคอยบอกตำแหน่งเพื่อนร่วมทีม','Sees the whole field and calls plays to teammates.'],e:['ผู้วิ่งขโมยเบสสอง ผู้รับลูกรีบโยนไปเบสสอง','A runner steals second; the catcher throws there.']},
+{id:'1B',x:292,y:282,a:'1B',n:['ผู้รักษาเบสหนึ่ง','First Baseman'],w:['ข้างเบสหนึ่ง','Beside first base'],r:['รับลูกโยนเพื่อทำเอาต์ผู้ตีที่เบสหนึ่ง','Catches throws to get batters out at first.'],t:['รับลูกจากผู้เล่นในสนามทุกคน','Receives throws from the other infielders.'],e:['ผู้เล่นเบสสามโยนมา ผู้รักษาเบสหนึ่งเหยียบเบส ผู้ตีเอาต์','The third baseman throws over; the first baseman touches the bag: out.']},
+{id:'2B',x:252,y:230,a:'2B',n:['ผู้รักษาเบสสอง','Second Baseman'],w:['ระหว่างเบสหนึ่งกับเบสสอง','Between first and second base'],r:['ดูแลฝั่งขวาของสนามใน และเบสสอง','Covers the right side of the infield and second base.'],t:['จับคู่กับชอร์ตสต็อปเพื่อทำเอาต์ที่เบสสอง','Pairs with the shortstop on plays at second.'],e:['ลูกกลิ้งมาทางขวา เก็บแล้วโยนไปเบสหนึ่ง','A grounder up the right side: field it, throw to first.']},
+{id:'SS',x:188,y:230,a:'SS',n:['ชอร์ตสต็อป','Shortstop'],w:['ระหว่างเบสสองกับเบสสาม','Between second and third base'],r:['ปิดช่องกลางสนามใน โยนไกลและเร็ว','Guards the big middle gap with long, quick throws.'],t:['ช่วยเบสสองและเบสสาม','Backs up second and third base.'],e:['ลูกกลิ้งลึกๆ ด้านซ้าย ชอร์ตสต็อปโยนข้ามสนามไปเบสหนึ่ง','A deep grounder to the left side; the shortstop throws across to first.']},
+{id:'3B',x:148,y:282,a:'3B',n:['ผู้รักษาเบสสาม','Third Baseman'],w:['ข้างเบสสาม','Beside third base'],r:['รับลูกแรงๆ ที่มาทางเบสสาม แล้วโยนไกลไปเบสหนึ่ง','Handles hard shots near third and makes the long throw to first.'],t:['ทำงานกับชอร์ตสต็อปและผู้เล่นเบสหนึ่ง','Works with the shortstop and first baseman.'],e:['ผู้ตีตีลูกกลิ้งแรงมาเบสสาม ผู้เล่นเบสสามโยนทำเอาต์ที่เบสหนึ่ง','A hard grounder to third: field it and get the out at first.']},
+{id:'LF',x:110,y:150,a:'LF',n:['ผู้เล่นสนามซ้าย','Left Fielder'],w:['สนามนอกด้านซ้าย','Deep left side of the outfield'],r:['จับลูกลอยและวิ่งตามลูกที่ตีไปทางซ้าย','Catches fly balls and chases hits to the left.'],t:['ช่วยผู้เล่นสนามกลาง และโยนกลับเข้าสนามใน','Backs up center; throws back to the infield.'],e:['ลูกลอยไปซ้าย ผู้เล่นสนามซ้ายจับได้ ผู้ตีเอาต์','A fly ball to left is caught: the batter is out.']},
+{id:'CF',x:220,y:115,a:'CF',n:['ผู้เล่นสนามกลาง','Center Fielder'],w:['กลางสนามนอก ไกลโฮมเพลตที่สุด','Middle of the outfield, farthest from home'],r:['ดูแลพื้นที่สนามนอกกว้างที่สุด','Covers the most outfield ground.'],t:['คอยประสานและเรียกลูกกับผู้เล่นซ้ายขวา','Calls for balls and coordinates with left and right.'],e:['ลูกลอยสูงกลางสนาม ผู้เล่นสนามกลางวิ่งเข้าไปรับ','A high fly up the middle: the center fielder runs under it.']},
+{id:'RF',x:330,y:150,a:'RF',n:['ผู้เล่นสนามขวา','Right Fielder'],w:['สนามนอกด้านขวา','Deep right side of the outfield'],r:['จับลูกลอยทางขวา และโยนแรงไปเบสสามหรือโฮม','Catches fly balls to the right; strong arm to third or home.'],t:['ช่วยผู้เล่นเบสหนึ่งและสนามกลาง','Backs up first base and center field.'],e:['ลูกตีไปขวา ผู้เล่นสนามขวาเก็บแล้วโยนเข้าสนามใน','A hit to right: pick it up and fire it to the infield.']}];
+const BAT=[196,352],H=[220,350],B1=[282,288],B2=[220,226],B3=[158,288];
+const SVG=`<svg viewBox="0 0 440 400" class="field" role="img" aria-label="Baseball field">
+<rect width="440" height="400" fill="var(--g1)"/><path d="M220 350 L36 166 A260 260 0 0 1 404 166 Z" fill="var(--g2)" stroke="#fff" stroke-width="2"/>
+<path d="M36 166 A260 260 0 0 1 404 166" fill="none" stroke="#7a5230" stroke-width="6"/>
+<circle cx="220" cy="288" r="90" fill="var(--dirt)"/><polygon points="220,340 272,288 220,236 168,288" fill="var(--g2)"/>
+<rect x="182" y="336" width="24" height="34" fill="none" stroke="#fff" stroke-width="2"/><rect x="234" y="336" width="24" height="34" fill="none" stroke="#fff" stroke-width="2"/>
+<circle cx="220" cy="290" r="10" fill="#b07a45"/>
+<g fill="#fff"><rect x="276" y="282" width="12" height="12" transform="rotate(45 282 288)"/><rect x="214" y="220" width="12" height="12" transform="rotate(45 220 226)"/><rect x="152" y="282" width="12" height="12" transform="rotate(45 158 288)"/><polygon points="213,346 227,346 227,352 220,358 213,352"/></g>
+<text class="lb" x="220" y="62" data-i="fence">รั้วสนาม (Fence)</text><text class="lb" x="330" y="215" data-i="inf">สนามใน (Infield)</text><text class="lb" x="120" y="225" data-i="outf">สนามนอก (Outfield)</text>
+<text class="lb" x="70" y="250" data-i="foul" transform="rotate(-45 70 250)">เส้นฟาวล์ (Foul line)</text><text class="lb" x="320" y="340" data-i="home">โฮมเพลต (Home)</text><text class="lb" x="330" y="296" data-i="b1">เบส 1</text><text class="lb" x="220" y="212" data-i="b2">เบส 2</text><text class="lb" x="110" y="296" data-i="b3">เบส 3</text>
+${POS.map(p=>`<g class="pl mv" data-k="${p.id}" tabindex="0" role="button"><circle r="14"/><text y="4">${p.a}</text></g>`).join('')}
+<g class="of mv" data-k="bat"><rect x="-12" y="-12" width="24" height="24" rx="4"/><text y="4">B</text></g>
+<g class="of mv hid" data-k="run"><rect x="-12" y="-12" width="24" height="24" rx="4"/><text y="4">R</text></g>
+<g class="mv" data-k="ball"><circle r="6" fill="#fff" stroke="#c62d2d" stroke-width="2"/></g></svg>`;
+Object.assign(U,{fence:['รั้วสนาม (Fence)','Fence'],inf:['สนามใน (Infield)','Infield'],outf:['สนามนอก (Outfield)','Outfield'],foul:['เส้นฟาวล์ (Foul line)','Foul line'],home:U.home,b1:['เบส 1','1st'],b2:['เบส 2','2nd'],b3:['เบส 3','3rd']});
+U.home=['หน้าแรก','Home'];U.hp=['โฮมเพลต (Home)','Home plate'];
+function mount(host,pick){host.innerHTML=SVG;const svg=host.firstElementChild,el={};$$('[data-k]',svg).forEach(n=>el[n.dataset.k]=n);
+ const f={svg,el,place(k,p){el[k].style.transform=`translate(${p[0]}px,${p[1]}px)`},mark(k,c){el[k]&&el[k].classList.add(c)},clear(){$$('.pl',svg).forEach(n=>n.classList.remove('sel','good','bad','hint'))}};
+ POS.forEach(p=>f.place(p.id,[p.x,p.y]));f.place('bat',BAT);f.place('run',B1);f.place('ball',[220,290]);
+ $$('[data-i=home]',svg).forEach(n=>n.dataset.i='hp');
+ if(pick)$$('.pl',svg).forEach(n=>{const go=()=>pick(n.dataset.k);n.onclick=go;n.onkeydown=e=>{if(e.key=='Enter'||e.key==' '){e.preventDefault();go()}}});
+ return f}
+const sbHTML=(s,i,top)=>`<div><b>${s.b}</b><span>${u('B')} (Ball)</span></div><div><b>${s.s}</b><span>${u('S')} (Strike)</span></div><div><b>${s.o}</b><span>${u('O')} (Out)</span></div><div><b>${s.r}</b><span>${u('R')} (Run)</span></div><div><b>${i}${top?'▲':'▼'}</b><span>${u('inn')} (Inning)</span></div>`;
+const LEARN=[['🎯','เป้าหมาย','Goal','สองทีมผลัดกันตีและรับ ทีมที่ทำคะแนน (Run) ได้มากกว่าเมื่อจบเกมเป็นผู้ชนะ','Two teams take turns batting and fielding. The team with more runs at the end wins.'],
+['🏏','ฝ่ายรุก (Offense)','Offense','ผู้ตีพยายามตีลูกแล้ววิ่งผ่านเบส 1 → 2 → 3 → โฮม ผู้วิ่งที่เหยียบโฮมได้ 1 คะแนน','The batter hits, then runners go 1st → 2nd → 3rd → home. Touching home plate scores one run.'],
+['🧤','ฝ่ายรับ (Defense)','Defense','ผู้เล่น 9 คนในสนามพยายามเก็บลูกและทำเอาต์ผู้ตีหรือผู้วิ่ง เพื่อไม่ให้เสียคะแนน','Nine fielders collect the ball and put batters or runners out to stop runs.'],
+['🔁','อินนิง (Inning)','Inning','แต่ละอินนิงมี 2 ครึ่ง: ครึ่งบน ทีมเยือนตี ครึ่งล่าง ทีมเหย้าตี เมื่อฝ่ายรุกถูกเอาต์ครบ 3 คน สองทีมสลับกัน','Each inning has two halves: top = away team bats, bottom = home team bats. After 3 outs the teams switch.'],
+['📅','ทั้งเกม','Whole game','เกมมาตรฐานมี 9 อินนิง ถ้าเสมอจะเล่นอินนิงพิเศษต่อ','A standard game has 9 innings. If tied, extra innings are played.']];
+const RULES=[['⚪','บอล (Ball)','Ball','ลูกที่ขว้างนอกเขตสไตรก์ และผู้ตีไม่ตี ครบ 4 บอล ผู้ตีเดินไปเบสหนึ่ง (Walk)','A pitch outside the strike zone that isn’t swung at. Four balls: the batter walks to first.'],
+['🔴','สไตรก์ (Strike)','Strike','ลูกผ่านเขตสไตรก์ (เหนือเข่า-ถึงหน้าอก เหนือโฮมเพลต) หรือผู้ตีตีพลาด ครบ 3 สไตรก์ ผู้ตีเอาต์','A pitch through the zone (knees to chest over the plate) or a swing and miss. Three strikes: out.'],
+['🚫','ฟาวล์ (Foul)','Foul','ลูกที่ตีออกนอกเส้นฟาวล์ นับเป็นสไตรก์ได้ถึง 2 สไตรก์ แต่ไม่ทำให้เป็นสไตรก์ที่ 3','A ball hit outside the foul lines. It counts as a strike up to 2, but never as strike three.'],
+['❌','เอาต์ (Out)','Out','ผู้ตีเอาต์เมื่อ: ตีพลาด 3 ครั้ง ลูกลอยถูกจับ หรือลูกถึงเบสก่อนผู้วิ่ง ครบ 3 เอาต์ จบครึ่งอินนิง','Batter is out by: 3 strikes, a caught fly ball, or the ball reaching the base first. Three outs end the half-inning.'],
+['🦶','ฟอร์ซเอาต์ vs แท็กเอาต์','Force vs Tag','ฟอร์ซ: ผู้วิ่งต้องวิ่งไปเบสต่อไป ผู้เล่นเหยียบเบสพร้อมถือลูกก็เอาต์ แท็ก: ถ้าไม่ถูกบังคับ ต้องใช้ลูกแตะตัวผู้วิ่ง','Force: the runner must advance, so touching the base with the ball is enough. Tag: if not forced, the fielder must tag the runner.'],
+['💥','โฮมรัน (Home Run)','Home Run','ตีลูกข้ามรั้วในเขตแฟร์ ทุกคนวิ่งครบรอบเบส ผู้ตีและผู้วิ่งบนเบสทำคะแนนทั้งหมด','A fair ball over the fence: everyone circles the bases and every runner plus the batter scores.']];
+const SCN=[
+{n:['ขว้างและรับลูก','Pitch & catch'],fr:[
+{b:BAT,r:null,ball:[220,290],sc:{b:0,s:0,o:0,r:0},t:['ผู้ขว้างถือลูกบนเนิน ผู้ตี (■) ยืนรอ ผู้รับลูกนั่งหลังโฮมเพลต','The pitcher holds the ball on the mound. The batter (■) waits and the catcher sets up behind home plate.']},
+{ball:[220,338],t:['ผู้ขว้างโยนลูกไปโฮมเพลต ลูกผ่านเขตสไตรก์ (เข่าถึงหน้าอกผู้ตี)','The pitch flies to home plate through the strike zone (knees to chest).']},
+{ball:[220,374],sc:{s:1},t:['ผู้รับลูกรับได้ ผู้ตีไม่ตี และลูกอยู่ในเขต = สไตรก์ 1','The catcher catches it. The batter took a pitch in the zone = Strike 1.']}]},
+{n:['ตีลูกได้','Batter hits'],fr:[
+{b:BAT,r:null,ball:[220,290],sc:{b:0,s:0,o:0,r:0},t:['ผู้ขว้างพร้อม ผู้ตีเตรียมตี','The pitcher is ready; the batter will try to hit.']},
+{ball:[220,338],t:['ลูกพุ่งเข้าหาโฮมเพลต','The pitch comes in.']},
+{ball:[300,200],b:[250,325],d:{RF:[318,160]},t:['ผู้ตีตีโดนลูกในเขตแฟร์ ผู้ตีกลายเป็นผู้วิ่ง (Runner) และวิ่งไปเบสหนึ่ง','Contact in fair territory. The batter becomes a runner and sprints to first.']},
+{ball:[318,168],b:[282,288],d:{RF:[318,166]},t:['ผู้เล่นสนามขวาเก็บลูก แต่ผู้วิ่งถึงเบสหนึ่งก่อน = ปลอดภัย (Safe) เรียกว่าซิงเกิล (Single)','The right fielder gets it, but the runner reached first first: Safe. This is a Single.']}]},
+{n:['ลูกกลิ้ง ฟอร์ซเอาต์','Grounder, force out'],fr:[
+{b:BAT,r:null,ball:[220,290],sc:{b:0,s:0,o:0,r:0},t:['ไม่มีผู้วิ่งบนเบส ผู้ตีพร้อมตี','No runners on base. The batter is ready.']},
+{ball:[220,338],t:['ผู้ขว้างโยนลูกเข้าโฮม','The pitch comes in.']},
+{ball:[150,300],b:[240,330],t:['ผู้ตีตีลูกกลิ้งไปทางเบสสาม แล้ววิ่งไปเบสหนึ่ง','A ground ball toward third base; the batter runs to first.']},
+{d:{'3B':[154,298]},ball:[154,298],b:[262,312],t:['ผู้เล่นเบสสามวิ่งไปหยิบลูก','The third baseman moves over and picks up the ball.']},
+{ball:[292,282],d:{'3B':[154,298],'1B':[292,282]},b:[272,300],t:['โยนไปเบสหนึ่ง ผู้รักษาเบสหนึ่งเหยียบเบสพร้อมถือลูก ก่อนผู้ตีจะถึง','Throw to first. The first baseman holds the ball on the base before the runner arrives.']},
+{b:null,sc:{o:1},t:['เอาต์! ผู้ตีต้องวิ่งไปเบสหนึ่งเสมอ จึงเป็นฟอร์ซเอาต์ ไม่ต้องแท็กตัว = 1 เอาต์','Out! The batter must run to first, so it is a force out: no tag needed. One out.']}]},
+{n:['ลูกลอย','Fly ball'],fr:[
+{b:BAT,r:null,ball:[220,290],sc:{b:0,s:0,o:0,r:0},t:['ผู้ตีพร้อมตี ผู้เล่นสนามนอกยืนไกลๆ','The batter is ready. Outfielders stand deep.']},
+{ball:[220,338],t:['ผู้ขว้างโยนลูก','The pitch comes in.']},
+{ball:[216,140],b:[245,328],t:['ผู้ตีตีลูกลอยสูงไปกลางสนาม','A high fly ball to center field.']},
+{ball:[216,128],d:{CF:[216,128]},t:['ผู้เล่นสนามกลางวิ่งเข้าไปอยู่ใต้ลูก','The center fielder runs under the ball.']},
+{b:null,sc:{o:1},t:['จับลูกก่อนตกพื้น = ผู้ตีเอาต์ทันที (1 เอาต์) ผู้วิ่งที่มีต้องกลับไปแตะเบสเดิมก่อนจึงวิ่งต่อได้','Caught before touching the ground = batter out (1 out). Any runners must tag up before advancing.']}]},
+{n:['ขโมยเบส','Steal a base'],fr:[
+{b:BAT,r:B1,ball:[220,290],sc:{b:0,s:0,o:0,r:0},t:['ผู้วิ่ง (R) อยู่เบสหนึ่ง และอยากขโมยเบสสอง','A runner (R) is on first and wants to steal second.']},
+{ball:[220,338],r:[258,254],t:['ผู้ขว้างโยนลูก ผู้วิ่งออกวิ่งไปเบสสองทันที','The pitcher throws and the runner sprints for second.']},
+{ball:[220,374],r:[238,240],sc:{s:1},t:['ผู้รับลูกรับได้ (สไตรก์ 1) แล้วเตรียมโยนไปเบสสอง','The catcher catches it (Strike 1) and prepares to throw to second.']},
+{ball:[224,232],d:{SS:[224,232]},r:B2,t:['ชอร์ตสต็อปรับลูกแต่ผู้วิ่งสไลด์ถึงเบสสองก่อน = ปลอดภัย (Safe) ขโมยเบสสำเร็จ','The shortstop gets it, but the runner slid in first: Safe. Successful steal.']}]},
+{n:['โฮมรัน','Home run'],fr:[
+{b:BAT,r:B1,ball:[220,290],sc:{b:0,s:0,o:0,r:0},t:['ผู้วิ่งอยู่เบสหนึ่ง ผู้ตีพร้อมตี','A runner is on first; the batter is ready.']},
+{ball:[220,338],t:['ผู้ขว้างโยนลูก','The pitch comes in.']},
+{ball:[220,50],b:[245,328],r:[262,266],d:{CF:[220,125]},t:['ผู้ตีตีลูกข้ามรั้วสนามในเขตแฟร์!','The ball sails over the fence in fair territory!']},
+{r:B3,b:B2,t:['เป็นโฮมรัน ทุกคนเดินวิ่งรอบเบสได้เลย','It is a home run: everyone can circle the bases.']},
+{r:H,b:B3,sc:{r:1},t:['ผู้วิ่งคนแรกเหยียบโฮม = 1 คะแนน','The first runner touches home = 1 run.']},
+{r:null,b:H,sc:{r:2},t:['ผู้ตีเหยียบโฮมเป็นคนสุดท้าย = รวม 2 คะแนน โฮมรันได้คะแนนเท่ากับจำนวนคนบนเบส + 1','The batter touches home last = 2 runs total. A home run scores everyone on base, plus one.']}]}];
+SCN.forEach(s=>{let a={d:{},sc:{}};s.fr=s.fr.map(f=>a={...a,...f,d:{...a.d,...f.d},sc:{...a.sc,...f.sc}})});
+const $go=id=>{$$('main>section').forEach(s=>s.hidden=s.id!='s-'+id);$$('#nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.go==id));P.vis[id]=1;save();if(id!='sim')simStop();render();scrollTo(0,0)};
+const SEC=['home','learn','field','sim','rules','chal','prog'];
+$('#nav').innerHTML=SEC.map(s=>`<button data-go="${s}"></button>`).join('');
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)$go(g.dataset.go);const l=e.target.closest('[data-l]');if(l){lang=l.dataset.l;save();document.documentElement.lang=lang;render()}});
+// explore
+let ef,sel=null;
+function pickE(k){sel=k;ef.clear();ef.mark(k,'sel');render()}
+// sim
+let sf,sim={i:0,sid:0,play:false,spd:1,tm:null};
+function simStop(){clearInterval(sim.tm);sim.play=false}
+function simShow(){const s=SCN[sim.sid],f=s.fr[sim.i];sf.svg.style.setProperty('--d',(1.2/sim.spd)+'s');
+ POS.forEach(p=>sf.place(p.id,f.d[p.id]||[p.x,p.y]));sf.place('bat',f.b||BAT);sf.el.bat.classList.toggle('hid',!f.b);sf.place('run',f.r||B1);sf.el.run.classList.toggle('hid',!f.r);sf.place('ball',f.ball);
+ $('#sbsim').innerHTML=sbHTML(f.sc,1,true);
+ $('#teams').innerHTML=`<p style="margin:.2em 0"><b style="color:var(--org)">■ ${T(['ทีมเยือน (Away) · ฝ่ายรุก (Offense)','Away team · Offense'])}</b> — ${T(['ผู้ตี (B) และผู้วิ่ง (R) ครึ่งบน ▲ ได้ ','Batter (B) and runner (R), top ▲ half. Runs: '])}${f.sc.r} ${T(['คะแนน','run(s)'])}</p><p style="margin:.2em 0"><b style="color:var(--blue)">● ${T(['ทีมเหย้า (Home) · ฝ่ายรับ (Defense)','Home team · Defense'])}</b> — ${T(['ผู้เล่น 9 คนในสนาม (P, C, 1B, 2B, SS, 3B, LF, CF, RF) พยายามทำเอาต์','9 fielders (P, C, 1B, 2B, SS, 3B, LF, CF, RF) trying to get outs'])}</p>`;$('#stxt').textContent=T(f.t);$('#stp').textContent=`${u('step')} ${sim.i+1}/${s.fr.length}`;
+ $('#bPlay').textContent=sim.play?'⏸':'▶';$('#bBack').disabled=sim.i==0;$('#bNext').disabled=sim.i==s.fr.length-1;
+ $('#scn').innerHTML=SCN.map((x,j)=>`<button aria-pressed="${j==sim.sid}" data-j="${j}">${j+1}. ${T(x.n)}</button>`).join('')}
+function simTick(){const n=SCN[sim.sid].fr.length;if(sim.i<n-1){sim.i++;simShow()}if(sim.i>=n-1){simStop();simShow()}}
+function simPlay(){if(sim.play){simStop();return simShow()}const n=SCN[sim.sid].fr.length;if(sim.i>=n-1)sim.i=0;sim.play=true;simShow();sim.tm=setInterval(simTick,2300/sim.spd)}
+// rules widget
+let R={b:0,s:0,o:0,a:0,h:0,inn:1,top:true,m:'m0'};
+function rAct(k){const m=R;if(k=='ball'){m.b++;m.m='mBall';if(m.b==4){m.m='mWalk';m.b=m.s=0}}
+ if(k=='str'){m.s++;m.m='mStr';if(m.s==3){m.m='mK';m.o++;m.b=m.s=0}}
+ if(k=='foul'){if(m.s<2){m.s++;m.m='mFoul'}else m.m='mFoul2'}
+ if(k=='out'){m.o++;m.b=m.s=0;m.m='mOut'}
+ if(k=='run'){m[m.top?'a':'h']++;m.m='mRun'}
+ if(m.o>=3){m.o=0;m.b=m.s=0;m.m='mHalf';if(m.top)m.top=false;else{m.top=true;m.inn++}}render()}
+// challenges
+const QS=[
+{id:'c1',tp:'pos',k:'c',a:['P'],q:['ใครเป็นผู้ขว้างลูกให้ผู้ตี?','Which player throws the ball to the batter?']},
+{id:'c2',tp:'pos',k:'c',a:['C'],q:['ใครนั่งหลังโฮมเพลตเพื่อรับลูกที่ขว้างมา?','Who crouches behind home plate to catch the pitches?']},
+{id:'c3',tp:'pos',k:'c',a:['1B'],q:['ผู้ตีวิ่งไปเบสหนึ่ง ใครเฝ้าเบสนั้น?','The batter runs to first base. Who guards that base?']},
+{id:'f1',tp:'follow',k:'c',ball:[150,300],a:['3B','SS'],q:['ลูกกลิ้งไปทางเบสสาม ใครควรขยับไปเก็บลูก?','A ground ball rolls toward third base. Who should move to field it?'],why:['ลูกไปทางเบสสาม คนที่ใกล้ที่สุดคือผู้รักษาเบสสาม (หรือชอร์ตสต็อป)','The ball heads to third, so the third baseman (or shortstop) is closest.']},
+{id:'f2',tp:'follow',k:'c',ball:[100,130],a:['LF','CF'],q:['ลูกลอยสูงไปทางสนามซ้าย ใครควรวิ่งไปจับ?','A high fly ball heads to left field. Who should go catch it?'],why:['ลูกลอยไปสนามนอกซ้าย ผู้เล่นสนามซ้ายคือคนรับผิดชอบ (สนามกลางช่วยได้)','Left field is the left fielder’s zone (the center fielder can help).']},
+{id:'w1',tp:'rule',k:'m',q:['ลูกกลิ้ง ไม่มีผู้วิ่งบนเบส ผู้เล่นรับลูกได้แล้ว ควรทำอะไร?','A ground ball, no runners on base, and a fielder has the ball. Best play?'],
+ o:[['โยนไปเบสหนึ่งก่อนผู้ตีถึง','Throw to first before the batter arrives',1],['โยนไปโฮมเพลต','Throw to home plate',0,'ไม่มีผู้วิ่งที่จะเข้าโฮม จึงไม่ได้เอาต์ใคร','No one is trying to score, so no out is made there.'],['ถือลูกไว้เฉยๆ','Just hold the ball',0,'ผู้ตีจะถึงเบสหนึ่งโดยปลอดภัย เสียโอกาสทำเอาต์','The batter would reach first safely: a wasted out.']],ex:['โยนไปเบสหนึ่ง เป็นฟอร์ซเอาต์','Throw to first: a force out.']},
+{id:'w2',tp:'rule',k:'m',q:['ผู้ตีตีลูกลอย ผู้เล่นสนามนอกจับได้ก่อนลูกตกพื้น เกิดอะไรขึ้น?','A fly ball is caught before it hits the ground. What happens?'],
+ o:[['ผู้ตีเอาต์','The batter is out',1],['ผู้ตีได้เดินไปเบสหนึ่ง','The batter walks to first',0,'การเดินเกิดจาก 4 บอลเท่านั้น','A walk only comes from four balls.'],['นับเป็นสไตรก์','It counts as a strike',0,'ลูกที่ตีแล้วถูกจับ ไม่ใช่สไตรก์ แต่เป็นเอาต์ทันที','A caught batted ball is an out, not a strike.']],ex:['ลูกที่ตีแล้วถูกจับก่อนตกพื้นคือเอาต์','A batted ball caught in the air is an out.']},
+{id:'s1',tp:'score',k:'m',q:['มีผู้วิ่งอยู่เบสสาม 1 คน ผู้ตีตีโฮมรัน ได้กี่คะแนน?','A runner is on third and the batter hits a home run. How many runs score?'],
+ o:[['2 คะแนน','2 runs',1],['1 คะแนน','1 run',0,'ผู้ตีเองก็ทำคะแนนจากโฮมรันด้วย','The batter scores on a home run too.'],['0 คะแนน','0 runs',0,'โฮมรันทำให้ทุกคนวิ่งเข้าโฮมได้','A home run lets everyone score.']],ex:['ผู้วิ่ง 1 คน + ผู้ตี 1 คน = 2 คะแนน','1 runner + 1 batter = 2 runs.']},
+{id:'s2',tp:'score',k:'m',q:['นับได้ 3 บอล 2 สไตรก์ ผู้ขว้างโยนนอกเขต ผู้ตีไม่ตี เกิดอะไรขึ้น?','Count is 3 balls, 2 strikes. The pitch is outside the zone and not swung at. What happens?'],
+ o:[['ผู้ตีเดินไปเบสหนึ่ง (Walk)','The batter walks to first (Walk)',1],['ผู้ตีเอาต์','The batter is out',0,'ผู้ตีเอาต์เมื่อครบ 3 สไตรก์ แต่นี่คือบอลที่ 4','Out needs three strikes; this is ball four.'],['นับใหม่โดยไม่มีอะไรเกิด','Nothing happens',0,'ครบ 4 บอลแล้ว ผู้ตีได้ไปเบสหนึ่ง','Four balls sends the batter to first.']],ex:['บอลที่ 4 = Walk','Ball four = Walk.']},
+{id:'s3',tp:'score',k:'m',q:['มี 2 สไตรก์ ผู้ตีตีลูกฟาวล์ ผลเป็นอย่างไร?','Two strikes and the batter hits a foul ball. What is the count?'],
+ o:[['ยังเป็น 2 สไตรก์','Still 2 strikes',1],['3 สไตรก์ เอาต์','Strike three, out',0,'ฟาวล์ไม่ทำให้เป็นสไตรก์ที่ 3','A foul can’t be strike three.'],['นับเป็นบอล','It counts as a ball',0,'ฟาวล์ไม่ใช่บอล','A foul is not a ball.']],ex:['ฟาวล์เมื่อมี 2 สไตรก์ ผู้ตียังอยู่ต่อ','A foul with two strikes keeps the batter alive.']}];
+let ch={i:0,tries:0,hint:false,fb:null},cf;
+const rec=(q,ok)=>{if(ok){if(!P.done[q.id]){P.done[q.id]=1;P.xp+=ch.tries?5:10}P.ok[q.tp]=(P.ok[q.tp]||0)+1}else P.bad[q.tp]=(P.bad[q.tp]||0)+1;ch.tries++;save()};
+function pickC(k){const q=QS[ch.i];if(q.k!='c')return;cf.clear();const ok=q.a.includes(k),p=POS.find(x=>x.id==k);rec(q,ok);cf.mark(k,ok?'good':'bad');
+ if(ok)ch.fb={ok:1,fn:()=>`✅ ${u('done')} ${T(p.n)} (${p.a}): ${T(p.r)}`};
+ else{const c=POS.find(x=>x.id==q.a[0]);cf.mark(c.id,'hint');ch.fb={ok:0,fn:()=>`❌ ${u('notq')} ${u('isa')} ${T(p.n)} (${p.a}): ${T(p.r)}\n${q.why?T(q.why)+'\n':''}${u('right')} ${T(c.n)} (${c.a}): ${T(c.w)}.`}}render()}
+function pickM(j){const q=QS[ch.i],o=q.o[j];rec(q,o[2]);ch.fb=o[2]?{ok:1,fn:()=>`✅ ${u('done')} ${T(q.ex)}`}:{ok:0,fn:()=>`❌ ${u('notq')} ${lang=='th'?o[3]:o[4]}`};render()}
+const TOP=['pos','follow','rule','score'];
+function render(){
+ document.documentElement.lang=lang;
+ $$('[data-l]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l==lang));
+ $$('[data-i]').forEach(n=>n.textContent=u(n.dataset.i));
+ $$('#nav button').forEach(b=>b.textContent=u(b.dataset.go));
+ $('#stages').innerHTML=[['field','เข้าใจสนาม','Know the field'],['field','เรียนรู้ 9 ตำแหน่ง','Meet the 9 positions'],['learn','รุกและรับ','Offense & defense'],['rules','กติกาพื้นฐาน','Basic rules'],['sim','ดูสถานการณ์จริง','Watch real plays'],['chal','ฝึกด้วยภารกิจ','Practice with challenges']].map((s,i)=>`<button class="card stage" data-go="${s[0]}"><b>${i+1}</b> ${T([s[1],s[2]])}</button>`).join('');
+ $('#learnc').innerHTML=LEARN.map(c=>`<div class="card"><h3>${c[0]} ${T([c[1],c[2]])}</h3><p>${T([c[3],c[4]])}</p></div>`).join('');
+ $('#rulec').innerHTML=RULES.map(c=>`<div class="card"><h3>${c[0]} ${T([c[1],c[2]])}</h3><p>${T([c[3],c[4]])}</p></div>`).join('');
+ const p=POS.find(x=>x.id==sel);
+ $('#info').innerHTML=p?`<h3>${T(p.n)} <span class="pill">${p.a}</span></h3><p><b>${u('wh')}:</b> ${T(p.w)}</p><p><b>${u('ro')}:</b> ${T(p.r)}</p><p><b>${u('te')}:</b> ${T(p.t)}</p><p><b>${u('ex')}:</b> ${T(p.e)}</p>`:`<p class="mut">${u('tap')}</p>`;
+ simShow();
+ $('#rsb').innerHTML=sbHTML(R,R.inn,R.top);$('#rscore').textContent=`${u('away')} ${R.a} – ${R.h} ${u('home')} · ${u(R.top?'top':'bot')}`;$('#rmsg').textContent=u(R.m);
+ $('#rbtn').innerHTML=[['ball','bBall'],['str','bStr'],['foul','bFoul'],['out','bOut'],['run','bRun']].map(x=>`<button class="btn alt" data-r="${x[0]}">${u(x[1])}</button>`).join('');
+ // challenge
+ const q=QS[ch.i];$('#cnav').innerHTML=QS.map((x,j)=>`<button class="dot ${j==ch.i?'cur':''} ${P.done[x.id]?'ok':''}" data-j="${j}" aria-label="${j+1}">${P.done[x.id]?'✓':j+1}</button>`).join('');
+ $('#ccat').textContent=u(q.tp);$('#cq').textContent=T(q.q);$('#cfield').style.display=q.k=='c'?'':'none';
+ $('#copts').innerHTML=q.k=='m'?q.o.map((o,j)=>`<button class="opt" data-m="${j}">${T([o[0],o[1]])}</button>`).join(''):'';
+ $('#chint').textContent=u('hint');$('#cnext').textContent=u('nextq');$('#cnext').disabled=!P.done[q.id];
+ const hintT=q.k=='c'?(q.why?T(q.why):T(POS.find(x=>x.id==q.a[0]).w)):T(q.q);
+ $('#cfb').innerHTML=(ch.hint&&q.k=='c'?`<div class="fb">💡 ${hintT}</div>`:'')+(ch.fb?`<div class="fb ${ch.fb.ok?'ok':'no'}" style="white-space:pre-line">${ch.fb.fn()}</div>`:'');
+ // progress
+ const nd=Object.keys(P.done).length,okN=Object.values(P.ok).reduce((a,b)=>a+b,0),bdN=Object.values(P.bad).reduce((a,b)=>a+b,0);
+ const per=t=>{const a=P.ok[t]||0,b=P.bad[t]||0;return a+b?Math.round(100*a/(a+b)):0};
+ const bad=TOP.filter(t=>(P.bad[t]||0)>(P.ok[t]||0));
+ $('#pg').innerHTML=`<div class="card"><h3>${u('xp')}</h3><p style="font-size:34px;margin:0">⭐ ${P.xp}</p><p>${u('cd')}: ${nd}/${QS.length}</p><div class="bar"><i style="width:${100*nd/QS.length}%"></i></div><p>${u('ca')}: ${okN} / ${bdN}</p></div>
+ <div class="card"><h3>${u('tp')}</h3>${TOP.map(t=>`<p style="margin:.4em 0">${u(t)}: ${per(t)}%</p><div class="bar"><i style="width:${per(t)}%"></i></div>`).join('')}<p><b>${u('pr')}:</b> ${bad.length?bad.map(u).join(', '):'—'}</p></div>
+ <div class="card"><h3>${u('bd')}</h3><p>${okN?'🥇':'▫️'} ${u('b1')}</p><p>${SEC.every(s=>P.vis[s])?'🧭':'▫️'} ${u('b2')}</p><p>${nd==QS.length?'🏆':'▫️'} ${u('b3')}</p></div>`;
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-r]');if(b)rAct(b.dataset.r);
+ const m=e.target.closest('[data-m]');if(m)pickM(+m.dataset.m);
+ const j=e.target.closest('#cnav [data-j]');if(j)gotoQ(+j.dataset.j);
+ const s=e.target.closest('#scn [data-j]');if(s){simStop();sim.sid=+s.dataset.j;sim.i=0;simShow()}});
+function gotoQ(i){ch={i,tries:0,hint:false,fb:null};const q=QS[i];cf.clear();if(q.k=='c'){cf.el.bat.classList.add('hid');cf.el.run.classList.add('hid');cf.place('ball',q.ball||[220,290]);cf.el.ball.classList.toggle('hid',!q.ball)}render()}
+ef=mount($('#ef'),pickE);ef.el.run.classList.add('hid');ef.el.ball.classList.add('hid');
+mount($('#hf'));sf=mount($('#sf'));cf=mount($('#cfield'),pickC);
+$('#bPlay').onclick=simPlay;$('#bNext').onclick=()=>{simStop();sim.i++;simShow()};$('#bBack').onclick=()=>{simStop();sim.i--;simShow()};$('#bRe').onclick=()=>{simStop();sim.i=0;simShow()};
+$('#spd').onchange=e=>{sim.spd=+e.target.value;if(sim.play){clearInterval(sim.tm);sim.tm=setInterval(simTick,2300/sim.spd)}simShow()};
+$('#chint').onclick=()=>{ch.hint=true;render()};$('#cnext').onclick=()=>gotoQ((ch.i+1)%QS.length);
+$('#reset').onclick=()=>{P={xp:0,done:{},ok:{},bad:{},vis:{}};save();gotoQ(0)};
+gotoQ(0);$go('home');
+</script></body></html>
